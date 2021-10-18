@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, jsonify
-from errors import NotFoundError
+from errors import NotFoundError, BadRequestError
 
 
 app = Flask(__name__)
@@ -14,6 +14,11 @@ def not_found_error(error):
     return 'Not found', 404
 
 
+@app.errorhandler(BadRequestError)
+def not_found_error(error):
+    return 'Bad request', 400
+
+
 def run_sql(sql: str):
     conn = sqlite3.connect(app.config['DB_FILE'])
     cursor = conn.cursor()
@@ -23,14 +28,8 @@ def run_sql(sql: str):
 
 
 def make_results_lst(results: list):
-    return [
-            {
-            'title': line[0],
-            'country': line[1],
-            'release_year': line[2],
-            'genre': line[3],
-            'description': line[4]
-            } for line in results]
+    return [{'title': line[0], 'country': line[1], 'release_year': line[2], 'genre': line[3], 'description': line[4]}
+            for line in results]
 
 
 @app.route('/movie/title/')
@@ -82,6 +81,35 @@ def show_movie_by_genre(genre):
         raise NotFoundError
     return jsonify([{'title': line[0], 'description': line[1]} for line in results])
 
+
+@app.route('/2actors/')
+def show_pairs():
+    if (actor1 := request.args.get('actor1')) and (actor2 := request.args.get('actor2')):
+        actor1 = ' '.join(actor1.split('%')).lower()
+        actor2 = ' '.join(actor2.split('%')).lower()
+    # actor1 = "Rose McIver" #"Jack Black"  #
+    # actor2 = "Ben Lamb"  #"Dustin Hoffman"  #
+
+        sql = f"select \"cast\" from netflix" \
+              f" where lower(\"cast\") like '%{actor1}%' and lower(\"cast\")" \
+              f" like '%{actor2}%'"
+    else:
+        raise BadRequestError
+
+    if not (results := run_sql(sql)):
+        raise NotFoundError
+
+    actors = {}
+    for film in results:
+        film_actors = film[0].split(', ')
+        for actor in film_actors:
+            if actor1 not in actor.lower() and actor2 not in actor.lower():
+                actors[actor] = actors.get(actor, 0) + 1
+
+    if not (final_results := [a for a, c in actors.items() if c > 2]):
+        raise NotFoundError
+
+    return jsonify(final_results)
 
 
 if __name__ == '__main__':
