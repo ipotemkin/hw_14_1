@@ -66,8 +66,8 @@ def show_films_for_category(category: str):
     categories = {'children': ['G'], 'family': ['PG', 'PG-13'], 'adult': ['R', 'NC-17']}
     results = []
     if category in categories:
-        print(type(', '.join(categories[category])))
-        sql = f"select title, rating, description from netflix where rating in ('{', '.join(categories[category])}')"
+        str_ = '\', \''.join(categories[category])
+        sql = f"select title, rating, description from netflix where rating in ('{str_}')"
         results = run_sql(sql)
     if not results:
         raise NotFoundError
