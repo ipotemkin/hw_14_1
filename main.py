@@ -61,30 +61,6 @@ def show_movie_by_year(year1: int, year2: int):
     return jsonify([{'title': line[0], 'release_year': line[1]} for line in results])
 
 
-# @app.route('/rating/children/')
-# def show_films_for_children():
-#     sql = f"select title, rating, description from netflix where rating = 'G'"
-#     if not (results := run_sql(sql)):
-#         raise NotFoundError
-#     return jsonify([{'title': line[0], 'rating': line[1], 'description': line[2]} for line in results])
-#
-#
-# @app.route('/rating/family/')
-# def show_films_for_family():
-#     sql = f"select title, rating, description from netflix where rating in ('PG', 'PG-13')"
-#     if not (results := run_sql(sql)):
-#         raise NotFoundError
-#     return jsonify([{'title': line[0], 'rating': line[1], 'description': line[2]} for line in results])
-#
-#
-# @app.route('/rating/adult/')
-# def show_films_for_adults():
-#     sql = f"select title, rating, description from netflix where rating in ('R', 'NC-17')"
-#     if not (results := run_sql(sql)):
-#         raise NotFoundError
-#     return jsonify([{'title': line[0], 'rating': line[1], 'description': line[2]} for line in results])
-
-
 @app.route('/rating/<category>/')
 def show_films_for_category(category: str):
     categories = {'children': ['G'], 'family': ['PG', 'PG-13'], 'adult': ['R', 'NC-17']}
