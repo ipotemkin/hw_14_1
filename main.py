@@ -74,5 +74,15 @@ def show_films_for_category(category: str):
     return jsonify([{'title': line[0], 'rating': line[1], 'description': line[2]} for line in results])
 
 
+@app.route('/genre/<genre>')
+def show_movie_by_genre(genre):
+    sql = f"select title, description from netflix" \
+          f" where lower(listed_in) like '%{genre.lower()}%' order by release_year desc limit 10"
+    if not (results := run_sql(sql)):
+        raise NotFoundError
+    return jsonify([{'title': line[0], 'description': line[1]} for line in results])
+
+
+
 if __name__ == '__main__':
     app.run()
