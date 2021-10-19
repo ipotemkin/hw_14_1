@@ -1,12 +1,7 @@
-import sqlite3
-from flask import Flask, request, jsonify
+from __init__ import app
+from utils import run_sql, make_results
+from flask import request, jsonify
 from errors import NotFoundError, BadRequestError, ValidationError
-
-
-app = Flask(__name__)
-app.config['MAX_ITEMS'] = 100
-app.config['DB_FILE'] = 'netflix.db'
-app.config['CATEGORIES'] = {'children': ['G'], 'family': ['PG', 'PG-13'], 'adult': ['R', 'NC-17']}
 
 
 @app.errorhandler(404)
@@ -23,26 +18,6 @@ def not_found_error(error):
 @app.errorhandler(ValidationError)
 def not_found_error(error):
     return 'Validation error', 400
-
-
-def run_sql(sql: str):
-    conn = sqlite3.connect(app.config['DB_FILE'])
-    cursor = conn.cursor()
-    results = cursor.execute(sql).fetchall()
-    conn.close()
-    return results
-
-
-def make_results(*fields, data: list):
-    if len(fields) != len(data[0]):
-        raise ValidationError
-    results = []
-    for line in data:
-        results_line = {}
-        for i, field in enumerate(fields):
-            results_line[field] = line[i]
-        results.append(results_line)
-    return results
 
 
 # returns a movie by title
