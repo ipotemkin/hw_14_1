@@ -1,6 +1,6 @@
 from __init__ import app
 from utils import run_sql, make_results
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 from errors import NotFoundError, BadRequestError, ValidationError
 
 
@@ -18,6 +18,12 @@ def not_found_error(error):
 @app.errorhandler(ValidationError)
 def validation_error(error):
     return 'Validation error', 400
+
+
+# instructions
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 # returns a movie by title
