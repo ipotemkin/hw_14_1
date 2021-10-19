@@ -85,3 +85,7 @@ Functions realized:
 >   "title": "A Fall from Grace"
 > }]
 >```
+
+Dependencies
+---
+-  Flask
