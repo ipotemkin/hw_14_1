@@ -49,7 +49,7 @@ Functions realized:
 > }]
 >```
 
-> Get films by genre
+> Get first 10 films by genre (sorted by release year desc)
 >> `GET /genre/thriller`
 > ```json
 > [{
