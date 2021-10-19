@@ -4,10 +4,9 @@ from __init__ import app
 
 
 def run_sql(sql: str):
-    conn = sqlite3.connect(app.config['DB_FILE'])
-    cursor = conn.cursor()
-    results = cursor.execute(sql).fetchall()
-    conn.close()
+    with sqlite3.connect(app.config['DB_FILE']) as conn:
+        cursor = conn.cursor()
+        results = cursor.execute(sql).fetchall()
     return results
 
 
