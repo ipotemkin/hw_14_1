@@ -4,3 +4,7 @@ class NotFoundError(Exception):
 
 class BadRequestError(Exception):
     pass
+
+
+class ValidationError(Exception):
+    pass
