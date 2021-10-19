@@ -16,7 +16,7 @@ def not_found_error(error):
 
 
 @app.errorhandler(ValidationError)
-def not_found_error(error):
+def validation_error(error):
     return 'Validation error', 400
 
 
