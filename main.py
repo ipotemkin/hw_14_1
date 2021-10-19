@@ -6,6 +6,7 @@ from errors import NotFoundError, BadRequestError, ValidationError
 app = Flask(__name__)
 app.config['MAX_ITEMS'] = 100
 app.config['DB_FILE'] = 'netflix.db'
+app.config['CATEGORIES'] = {'children': ['G'], 'family': ['PG', 'PG-13'], 'adult': ['R', 'NC-17']}
 
 
 @app.errorhandler(404)
@@ -77,10 +78,9 @@ def show_movie_by_year(year1: int, year2: int):
 # returns movies by category
 @app.route('/rating/<category>/')
 def show_films_for_category(category: str):
-    categories = {'children': ['G'], 'family': ['PG', 'PG-13'], 'adult': ['R', 'NC-17']}
     results = []
-    if category in categories:
-        str_ = '\', \''.join(categories[category])
+    if category in app.config['CATEGORIES']:
+        str_ = '\', \''.join(app.config['CATEGORIES'][category])
         sql = f"select title, rating, description from netflix where rating in ('{str_}')"
         results = run_sql(sql)
     if not results:
