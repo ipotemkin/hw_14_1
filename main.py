@@ -112,5 +112,25 @@ def show_pairs():
     return jsonify(final_results)
 
 
+@app.route('/movie/')
+def find_movie():
+    sql_start = "select title, description from netflix where "
+    sql_lst = []
+    sql = ''
+    if type_ := request.args.get('type'):
+        sql_lst.append(f" type = '{type_}'")
+    if year := request.args.get('year'):
+        sql_lst.append(f" release_year = '{year}'")
+    if genre := request.args.get('genre'):
+        sql_lst.append(f" listed_in like '%{genre}%'")
+    if sql_lst:
+        sql = sql_start + ' and '.join(sql_lst)
+
+    if not (results := run_sql(sql)):
+        raise NotFoundError
+
+    return jsonify([{'title': film[0], 'description': film[1]} for film in results])
+
+
 if __name__ == '__main__':
     app.run()
